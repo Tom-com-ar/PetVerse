@@ -7,9 +7,10 @@ import 'package:provider/provider.dart';
 import 'firebase_config.dart';
 import 'providers/auth_provider.dart';
 import 'screens/auth_screen.dart';
-import 'screens/profile_screen.dart';
+import 'screens/home_screen.dart';
 import 'services/auth_service.dart';
 import 'services/pet_service.dart';
+import 'services/post_service.dart';
 import 'services/profile_service.dart';
 
 Future<void> main() async {
@@ -25,11 +26,13 @@ Future<void> main() async {
     await FirebaseAuth.instance.setLanguageCode('es');
     final profiles = ProfileService(FirebaseFirestore.instance);
     final pets = PetService(FirebaseFirestore.instance);
+    final posts = PostService(FirebaseFirestore.instance);
     runApp(
       MultiProvider(
         providers: [
           Provider<ProfileService>.value(value: profiles),
           Provider<PetService>.value(value: pets),
+          Provider<PostService>.value(value: posts),
           ChangeNotifierProvider(
             create: (_) =>
                 AuthProvider(AuthService(FirebaseAuth.instance, profiles)),
@@ -75,7 +78,7 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().user;
-    return user == null ? const AuthScreen() : ProfileScreen(user: user);
+    return user == null ? const AuthScreen() : HomeScreen(user: user);
   }
 }
 
