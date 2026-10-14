@@ -43,16 +43,4 @@ class ProfileService {
     'photoUrl': photoUrl.trim(),
     'updatedAt': FieldValue.serverTimestamp(),
   }, SetOptions(merge: true));
-
-  // PV3 will add pets here. PV2 already shows the owner's live list.
-  Stream<List<PetSummary>> watchPets(String uid) => _firestore
-      .collection('users')
-      .doc(uid)
-      .collection('pets')
-      .snapshots()
-      .map(
-        (snapshot) => snapshot.docs
-            .map((doc) => PetSummary.fromMap(doc.id, doc.data()))
-            .toList(),
-      );
 }

@@ -1,6 +1,6 @@
 # PetVerse
 
-Red social para mascotas hecha con Flutter Web. Esta etapa implementa PV1 (registro, acceso y recuperación de contraseña con correo) y PV2 (perfil editable con foto por URL, nombre, biografía y lista de mascotas).
+Red social para mascotas hecha con Flutter Web. Las etapas implementadas son PV1 (registro, acceso y recuperación de contraseña con correo), PV2 (perfil editable) y PV3 (registro y edición de mascotas con nombre, tipo, raza, edad, peso, fotos y biografía).
 
 ## Conectar Firebase
 
@@ -11,7 +11,7 @@ Red social para mascotas hecha con Flutter Web. Esta etapa implementa PV1 (regis
 5. En **Authentication → Settings → Authorized domains**, agregá `localhost` para probar en Chrome desde esta computadora.
 6. En **Firestore Database**, creá una base de datos. Elegí una ubicación y el modo de producción. En la pestaña **Rules**, pegá el contenido de `firestore.rules` y publicá las reglas.
 
-La URL de la foto se puede cambiar desde el perfil. La subida desde el dispositivo se implementará en PV8. La lista de mascotas se llenará al implementar PV3.
+La foto del perfil y las fotos de las mascotas se agregan mediante enlaces HTTPS. La subida desde el dispositivo se implementará en PV8.
 
 ## Ejecutar
 
@@ -33,15 +33,15 @@ flutter --no-version-check test
 flutter --no-version-check build web --dart-define-from-file=firebase_config.json
 ```
 
-Después de conectar Firebase: registrá un usuario, cerrá sesión, volvé a ingresar, probá «Olvidé mi contraseña» y editá el perfil. Confirmá en Firestore que exista `users/{uid}` y que el cambio de nombre o biografía quede guardado.
+Después de conectar Firebase: registrá un usuario, cerrá sesión, volvé a ingresar, probá «Olvidé mi contraseña» y editá el perfil. Luego, desde «Mis mascotas», agregá un perro o gato, completá sus datos y al menos una URL HTTPS de foto. Expandí su tarjeta para ver los detalles y probá «Editar mascota». Confirmá en Firestore que existan `users/{uid}` y `users/{uid}/pets/{petId}` con los cambios guardados.
 
 ## Estructura
 
-- `lib/models`: datos del usuario y resumen de mascota.
-- `lib/services`: acceso a Firebase Auth y Firestore.
+- `lib/models`: datos del usuario y las mascotas.
+- `lib/services`: acceso a Firebase Auth y Firestore para usuarios y mascotas.
 - `lib/providers`: sesión actual.
-- `lib/screens`: acceso y perfil.
-- `lib/widgets`: componentes del perfil.
+- `lib/screens`: acceso, perfil y formulario de mascota.
+- `lib/widgets`: componentes del perfil y tarjetas de mascotas.
 - `firestore.rules`: reglas de acceso para que cada usuario edite solo sus datos.
 
 La instalación local de Flutter usa `C:\Users\tomas\Documents\Codex\flutter-sdk-ready`. En otra computadora hay que instalar Flutter y configurar su ruta.

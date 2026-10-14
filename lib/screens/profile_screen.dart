@@ -2,11 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart' show User;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/pet.dart';
 import '../models/user_profile.dart';
 import '../providers/auth_provider.dart';
+import '../services/pet_service.dart';
 import '../services/profile_service.dart';
+import '../widgets/pet_card.dart';
 import '../widgets/profile_avatar.dart';
 import '../widgets/profile_edit_form.dart';
+import 'pet_form_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key, required this.user});
@@ -33,9 +37,33 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _openPetForm(BuildContext context, [Pet? pet]) async {
+    final pets = context.read<PetService>();
+    final saved = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => PetFormScreen(
+          pet: pet,
+          onSave: (value) => pet == null
+              ? pets.createPet(user.uid, value)
+              : pets.updatePet(user.uid, value),
+        ),
+      ),
+    );
+    if (saved == true && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            pet == null ? 'Mascota agregada.' : 'Mascota actualizada.',
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final profiles = context.read<ProfileService>();
+    final pets = context.read<PetService>();
     return Scaffold(
       appBar: AppBar(
         title: const Row(
@@ -109,13 +137,26 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    'Mis mascotas',
-                    style: Theme.of(context).textTheme.titleLarge,
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 12,
+                    runSpacing: 8,
+                    children: [
+                      Text(
+                        'Mis mascotas',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      FilledButton.icon(
+                        onPressed: () => _openPetForm(context),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Agregar mascota'),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
-                  StreamBuilder<List<PetSummary>>(
-                    stream: profiles.watchPets(user.uid),
+                  StreamBuilder<List<Pet>>(
+                    stream: pets.watchPets(user.uid),
                     builder: (context, petsSnapshot) {
                       if (petsSnapshot.hasError) {
                         return const Card(
@@ -136,7 +177,7 @@ class ProfileScreen extends StatelessWidget {
                           child: Padding(
                             padding: EdgeInsets.all(22),
                             child: Text(
-                              'Todavía no hay mascotas. Las agregaremos en PV3.',
+                              'Todavía no hay mascotas. Agregá la primera.',
                             ),
                           ),
                         );
@@ -144,15 +185,9 @@ class ProfileScreen extends StatelessWidget {
                       return Column(
                         children: pets
                             .map(
-                              (pet) => Card(
-                                child: ListTile(
-                                  leading: ProfileAvatar(
-                                    photoUrl: pet.photoUrl,
-                                    radius: 22,
-                                  ),
-                                  title: Text(pet.name),
-                                  subtitle: Text(pet.type),
-                                ),
+                              (pet) => PetCard(
+                                pet: pet,
+                                onEdit: () => _openPetForm(context, pet),
                               ),
                             )
                             .toList(),

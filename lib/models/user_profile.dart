@@ -22,25 +22,3 @@ class UserProfile {
         photoUrl: (data['photoUrl'] as String?) ?? '',
       );
 }
-
-class PetSummary {
-  const PetSummary({
-    required this.id,
-    required this.name,
-    required this.type,
-    required this.photoUrl,
-  });
-
-  final String id;
-  final String name;
-  final String type;
-  final String photoUrl;
-
-  factory PetSummary.fromMap(String id, Map<String, dynamic> data) =>
-      PetSummary(
-        id: id,
-        name: (data['name'] as String?) ?? 'Mascota',
-        type: (data['type'] as String?) ?? '',
-        photoUrl: (data['photoUrl'] as String?) ?? '',
-      );
-}
