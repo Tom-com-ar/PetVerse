@@ -1,11 +1,11 @@
 {
-    "name": "petverse",
-    "short_name": "petverse",
+    "name": "PetVerse",
+    "short_name": "PetVerse",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F9F7FF",
+    "theme_color": "#7455D3",
+    "description": "Un espacio para vos y tus mascotas.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

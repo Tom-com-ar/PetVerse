@@ -49,3 +49,4 @@ app.*.map.json
 
 # Local VS Code SDK path
 /.vscode/settings.json
+/firebase_config.json
