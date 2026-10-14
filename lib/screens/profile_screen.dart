@@ -60,6 +60,24 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _deletePet(BuildContext context, Pet pet) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await context.read<PetService>().deletePet(user.uid, pet.id);
+      if (messenger.mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('${pet.name} fue eliminada de tus mascotas.')),
+        );
+      }
+    } catch (_) {
+      if (messenger.mounted) {
+        messenger.showSnackBar(
+          const SnackBar(content: Text('No se pudo eliminar la mascota.')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final profiles = context.read<ProfileService>();
@@ -188,6 +206,7 @@ class ProfileScreen extends StatelessWidget {
                               (pet) => PetCard(
                                 pet: pet,
                                 onEdit: () => _openPetForm(context, pet),
+                                onDelete: () => _deletePet(context, pet),
                               ),
                             )
                             .toList(),

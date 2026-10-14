@@ -32,4 +32,9 @@ class PetService {
         .doc(pet.id)
         .update({...pet.toMap(), 'updatedAt': FieldValue.serverTimestamp()});
   }
+
+  Future<void> deletePet(String userId, String petId) async {
+    if (petId.isEmpty) throw ArgumentError('La mascota necesita un ID.');
+    await _pets(userId).doc(petId).delete();
+  }
 }

@@ -1,6 +1,6 @@
 # PetVerse
 
-Red social para mascotas hecha con Flutter Web. Las etapas implementadas son PV1 (registro y acceso con correo o Google, y recuperación de contraseña), PV2 (perfil editable) y PV3 (registro y edición de mascotas con nombre, tipo, raza, edad, peso, fotos y biografía).
+Red social para mascotas hecha con Flutter Web. Las etapas implementadas son PV1 (registro y acceso con correo o Google, y recuperación de contraseña), PV2 (perfil editable) y PV3 (registro, edición y eliminación de mascotas con nombre, tipo, raza, edad, peso, fotos y biografía).
 
 ## Conectar Firebase
 
@@ -33,7 +33,7 @@ flutter --no-version-check test
 flutter --no-version-check build web --dart-define-from-file=firebase_config.json
 ```
 
-Después de conectar Firebase: registrá un usuario, cerrá sesión, volvé a ingresar con correo o con «Continuar con Google», probá «Olvidé mi contraseña» y editá el perfil. Luego, desde «Mis mascotas», pulsá «Agregar mascota», completá sus datos y al menos una URL HTTPS de foto. Expandí su tarjeta para ver los detalles y probá «Editar mascota». Confirmá en Firestore que existan `users/{uid}` y `users/{uid}/pets/{petId}` con los cambios guardados.
+Después de conectar Firebase: registrá un usuario, cerrá sesión, volvé a ingresar con correo o con «Continuar con Google», probá «Olvidé mi contraseña» y editá el perfil. Luego, desde «Mis mascotas», pulsá «Agregar mascota», completá sus datos y al menos una URL HTTPS de foto. Expandí su tarjeta para ver los detalles y probá «Editar mascota». También podés pulsar «Eliminar mascota» y confirmar el borrado. Comprobá en Firestore que los cambios de `users/{uid}/pets/{petId}` se guarden y que la mascota eliminada desaparezca.
 
 Si el navegador sigue mostrando «Las agregaremos en PV3», está abierta una versión anterior. Cerrá la pestaña y abrí de nuevo la dirección donde se está sirviendo `build/web`, o detené la ejecución anterior en VS Code y volvé a iniciar `flutter run` desde esta carpeta.
 

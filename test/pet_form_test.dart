@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:petverse/models/pet.dart';
 import 'package:petverse/screens/pet_form_screen.dart';
 import 'package:petverse/utils/pet_validators.dart';
+import 'package:petverse/widgets/pet_card.dart';
 
 void main() {
   test('valida edad, peso con coma y enlaces de fotos', () {
@@ -77,5 +78,46 @@ void main() {
     expect(saved?.weightKg, 3.5);
     expect(saved?.photoUrls, hasLength(2));
     expect(saved?.bio, 'Muy juguetona.');
+  });
+
+  testWidgets('eliminar una mascota requiere confirmación', (tester) async {
+    var deleted = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PetCard(
+            pet: const Pet(
+              id: 'pet1',
+              name: 'Luna',
+              type: 'perro',
+              breed: 'Mestiza',
+              ageYears: 2,
+              weightKg: 3.5,
+              photoUrls: [],
+              bio: 'Muy juguetona.',
+            ),
+            onEdit: () {},
+            onDelete: () async {
+              deleted++;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Luna'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Eliminar mascota'));
+    await tester.pumpAndSettle();
+    expect(find.text('¿Eliminar a Luna?'), findsOneWidget);
+    await tester.tap(find.text('Cancelar'));
+    await tester.pumpAndSettle();
+    expect(deleted, 0);
+
+    await tester.tap(find.text('Eliminar mascota'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Eliminar'));
+    await tester.pumpAndSettle();
+    expect(deleted, 1);
   });
 }
