@@ -23,6 +23,7 @@ class AuthProvider extends ChangeNotifier {
       _service.register(name: name, email: email, password: password);
   Future<void> signIn(String email, String password) =>
       _service.signIn(email, password);
+  Future<void> signInWithGoogle() => _service.signInWithGoogle();
   Future<void> sendPasswordReset(String email) =>
       _service.sendPasswordReset(email);
   Future<void> signOut() => _service.signOut();

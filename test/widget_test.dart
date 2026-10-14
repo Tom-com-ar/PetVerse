@@ -19,15 +19,20 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: AuthScreen()));
 
     expect(find.text('Ingresar'), findsOneWidget);
+    expect(find.text('Continuar con Google'), findsOneWidget);
     await tester.tap(find.text('Crear una cuenta'));
     await tester.pump();
     expect(find.text('Repetir contraseña'), findsOneWidget);
+    expect(find.text('Continuar con Google'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Ya tengo cuenta'));
     await tester.tap(find.text('Ya tengo cuenta'));
     await tester.pump();
+    await tester.ensureVisible(find.text('Olvidé mi contraseña'));
     await tester.tap(find.text('Olvidé mi contraseña'));
     await tester.pump();
     expect(find.text('Enviar enlace'), findsOneWidget);
+    expect(find.text('Continuar con Google'), findsNothing);
   });
 
   testWidgets('el formulario de perfil guarda nombre y biografía', (

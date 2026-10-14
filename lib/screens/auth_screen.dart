@@ -82,6 +82,30 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _busy = true;
+      _message = null;
+    });
+    try {
+      await context.read<AuthProvider>().signInWithGoogle();
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isError = true;
+        _message = _authErrorMessage(error.code);
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isError = true;
+        _message = 'No se pudo ingresar con Google. Intentá de nuevo.';
+      });
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isRegister = _mode == AuthMode.register;
@@ -208,6 +232,28 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ),
                         ),
                       ),
+                      if (!isReset) ...[
+                        const SizedBox(height: 16),
+                        const Row(
+                          children: [
+                            Expanded(child: Divider()),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              child: Text('o'),
+                            ),
+                            Expanded(child: Divider()),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        OutlinedButton.icon(
+                          onPressed: _busy ? null : _signInWithGoogle,
+                          icon: const Text(
+                            'G',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          label: const Text('Continuar con Google'),
+                        ),
+                      ],
                       const SizedBox(height: 12),
                       if (!isReset)
                         TextButton(
@@ -256,5 +302,12 @@ String _authErrorMessage(String code) => switch (code) {
   'user-not-found' => 'Correo o contraseña incorrectos.',
   'too-many-requests' => 'Demasiados intentos. Probá más tarde.',
   'network-request-failed' => 'No hay conexión. Revisá Internet.',
+  'operation-not-allowed' => 'Falta activar Google en Firebase Authentication.',
+  'unauthorized-domain' =>
+    'Este dominio no está autorizado en Firebase Authentication.',
+  'popup-blocked' => 'El navegador bloqueó la ventana de Google. Permití las ventanas emergentes.',
+  'popup-closed-by-user' => 'Se canceló el ingreso con Google.',
+  'account-exists-with-different-credential' =>
+    'Ya existe una cuenta con ese correo. Ingresá con el método original.',
   _ => 'No se pudo completar la operación. Intentá de nuevo.',
 };

@@ -29,6 +29,13 @@ class AuthService {
   Future<void> signIn(String email, String password) async =>
       _auth.signInWithEmailAndPassword(email: email.trim(), password: password);
 
+  Future<void> signInWithGoogle() async {
+    final credential = await _auth.signInWithPopup(GoogleAuthProvider());
+    final user = credential.user;
+    if (user == null) throw StateError('No se pudo iniciar sesión con Google.');
+    await _profiles.createProfileIfMissing(user);
+  }
+
   Future<void> sendPasswordReset(String email) =>
       _auth.sendPasswordResetEmail(email: email.trim());
 

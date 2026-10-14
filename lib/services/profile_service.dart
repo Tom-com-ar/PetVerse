@@ -17,6 +17,20 @@ class ProfileService {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
+  Future<void> createProfileIfMissing(User user) async {
+    final reference = _firestore.collection('users').doc(user.uid);
+    if ((await reference.get()).exists) return;
+    final email = user.email ?? '';
+    final name = user.displayName?.trim();
+    await reference.set({
+      'email': email,
+      'name': name != null && name.isNotEmpty ? name : email.split('@').first,
+      'bio': '',
+      'photoUrl': user.photoURL ?? '',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   Stream<UserProfile> watchProfile(User user) =>
       _firestore.collection('users').doc(user.uid).snapshots().map((snapshot) {
         final data = snapshot.data();
