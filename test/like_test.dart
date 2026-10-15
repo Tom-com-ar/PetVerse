@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:petverse/models/post.dart';
+import 'package:petverse/models/post_comment.dart';
 import 'package:petverse/widgets/post_card.dart';
 
 void main() {
@@ -30,6 +31,9 @@ void main() {
             onToggleLike: () async {
               toggles++;
             },
+            comments: Stream<List<PostComment>>.value(const []),
+            onAddComment: (_) async {},
+            onDeleteComment: (_) async {},
           ),
         ),
       ),

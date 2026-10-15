@@ -58,6 +58,7 @@ class FeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final postService = context.read<PostService>();
+    final profileService = context.read<ProfileService>();
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 760),
@@ -120,6 +121,20 @@ class FeedScreen extends StatelessWidget {
                       currentUserId: user.uid,
                       onToggleLike: () =>
                           postService.toggleLike(posts[index].id, user.uid),
+                      comments: postService.watchComments(posts[index].id),
+                      onAddComment: (text) async {
+                        final profile = await profileService
+                            .watchProfile(user)
+                            .first;
+                        await postService.addComment(
+                          posts[index].id,
+                          user,
+                          profile,
+                          text,
+                        );
+                      },
+                      onDeleteComment: (commentId) =>
+                          postService.deleteComment(posts[index].id, commentId),
                     ),
                   );
                 },
