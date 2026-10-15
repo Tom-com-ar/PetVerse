@@ -19,10 +19,11 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="PetVerse: un espacio para vos y tus mascotas.">
+  <meta name="theme-color" content="#346B5C">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="PetVerse">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
@@ -31,6 +32,76 @@
 
   <title>PetVerse</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    #pwa-install-button {
+      position: fixed;
+      z-index: 10000;
+      right: 20px;
+      bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 999px;
+      background: #346B5C;
+      color: #fff;
+      font: 600 14px/1.2 system-ui, sans-serif;
+      box-shadow: 0 4px 14px rgb(38 53 47 / 22%);
+      cursor: pointer;
+    }
+
+    #pwa-install-button[hidden] {
+      display: none;
+    }
+
+    #pwa-install-button:focus-visible {
+      outline: 3px solid #E27957;
+      outline-offset: 3px;
+    }
+
+    #pwa-install-help {
+      width: min(420px, calc(100% - 40px));
+      border: 0;
+      border-radius: 18px;
+      padding: 24px;
+      color: #26352F;
+      font: 16px/1.5 system-ui, sans-serif;
+      box-shadow: 0 12px 40px rgb(38 53 47 / 28%);
+    }
+
+    #pwa-install-help::backdrop {
+      background: rgb(20 32 27 / 45%);
+    }
+
+    #pwa-install-help h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    #pwa-install-help p {
+      margin: 0 0 20px;
+    }
+
+    #pwa-install-help button {
+      display: block;
+      margin-left: auto;
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 18px;
+      background: #346B5C;
+      color: white;
+      font: 600 14px system-ui, sans-serif;
+      cursor: pointer;
+    }
+
+    @media (max-width: 839px) {
+      #pwa-install-button {
+        right: 14px;
+        bottom: calc(94px + env(safe-area-inset-bottom, 0px));
+      }
+    }
+  </style>
 </head>
 <body>
   <!--
@@ -41,6 +112,16 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
+  <button id="pwa-install-button" type="button" aria-label="Instalar PetVerse" aria-haspopup="dialog">
+    <span aria-hidden="true">⬇</span>
+    Instalar PetVerse
+  </button>
+  <dialog id="pwa-install-help" aria-labelledby="pwa-install-title">
+    <h2 id="pwa-install-title">Instalar PetVerse</h2>
+    <p id="pwa-install-instructions"></p>
+    <button id="pwa-install-close" type="button">Entendido</button>
+  </dialog>
+  <script src="pwa.js" defer></script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
