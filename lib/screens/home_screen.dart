@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+import 'adoption_screen.dart';
 import 'feed_screen.dart';
 import 'profile_screen.dart';
 
@@ -42,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
       index: _selectedIndex,
       children: [
         FeedScreen(user: widget.user),
+        AdoptionScreen(user: widget.user),
         ProfileScreen(user: widget.user),
       ],
     ),
@@ -53,6 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icon(Icons.dynamic_feed_outlined),
           selectedIcon: Icon(Icons.dynamic_feed),
           label: 'Publicaciones',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.volunteer_activism_outlined),
+          selectedIcon: Icon(Icons.volunteer_activism),
+          label: 'Adopción',
         ),
         NavigationDestination(
           icon: Icon(Icons.person_outline),

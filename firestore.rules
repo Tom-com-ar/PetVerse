@@ -60,5 +60,70 @@ service cloud.firestore {
           && resource.data.authorId == request.auth.uid;
       }
     }
+
+    match /adoption_listings/{listingId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasAll([
+          'ownerId', 'ownerName', 'petId', 'petName', 'type', 'breed',
+          'ageYears', 'photoUrl', 'description', 'location', 'createdAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'ownerId', 'ownerName', 'petId', 'petName', 'type', 'breed',
+          'ageYears', 'photoUrl', 'description', 'location', 'createdAt'
+        ])
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.ownerName == get(
+          /databases/$(database)/documents/users/$(request.auth.uid)
+        ).data.name
+        && request.resource.data.petId is string
+        && request.resource.data.petName is string
+        && request.resource.data.type in ['perro', 'gato']
+        && request.resource.data.breed is string
+        && request.resource.data.ageYears is int
+        && request.resource.data.ageYears >= 0
+        && request.resource.data.photoUrl is string
+        && request.resource.data.description is string
+        && request.resource.data.location is string
+        && request.resource.data.location.size() >= 2
+        && request.resource.data.location.size() <= 100
+        && request.resource.data.createdAt == request.time;
+      allow delete: if request.auth != null
+        && resource.data.ownerId == request.auth.uid;
+
+      match /inquiries/{inquiryId} {
+        allow read: if request.auth != null
+          && (request.auth.uid == get(
+            /databases/$(database)/documents/adoption_listings/$(listingId)
+          ).data.ownerId || request.auth.uid == resource.data.senderId);
+        allow create: if request.auth != null
+          && request.auth.uid != get(
+            /databases/$(database)/documents/adoption_listings/$(listingId)
+          ).data.ownerId
+          && request.resource.data.keys().hasAll([
+            'senderId', 'senderName', 'senderEmail', 'phone', 'message', 'createdAt'
+          ])
+          && request.resource.data.keys().hasOnly([
+            'senderId', 'senderName', 'senderEmail', 'phone', 'message', 'createdAt'
+          ])
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.senderName is string
+          && request.resource.data.senderName.size() > 0
+          && request.resource.data.senderName.size() <= 80
+          && request.resource.data.senderEmail is string
+          && request.resource.data.senderEmail.size() <= 254
+          && request.resource.data.phone is string
+          && request.resource.data.phone.size() <= 30
+          && request.resource.data.message is string
+          && request.resource.data.message.size() >= 10
+          && request.resource.data.message.size() <= 1000
+          && request.resource.data.createdAt == request.time;
+        allow delete: if request.auth != null
+          && (request.auth.uid == resource.data.senderId
+            || request.auth.uid == get(
+              /databases/$(database)/documents/adoption_listings/$(listingId)
+            ).data.ownerId);
+      }
+    }
   }
 }
