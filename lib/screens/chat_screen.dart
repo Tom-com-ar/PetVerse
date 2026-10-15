@@ -7,6 +7,7 @@ import '../models/chat_conversation.dart';
 import '../models/user_profile.dart';
 import '../services/chat_service.dart';
 import '../services/profile_service.dart';
+import '../utils/app_breakpoints.dart';
 import '../widgets/profile_avatar.dart';
 import 'chat_conversation_screen.dart';
 
@@ -16,16 +17,18 @@ class ChatScreen extends StatelessWidget {
   final User user;
 
   Future<void> _newChat(BuildContext context) async {
+    final viewport = MediaQuery.sizeOf(context);
     final profiles = context.read<ProfileService>();
     final ownProfile = await profiles.watchProfile(user).first;
     if (!context.mounted) return;
     final other = await showDialog<UserProfile>(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         title: const Text('Nuevo mensaje'),
         content: SizedBox(
-          width: 420,
-          height: 380,
+          width: viewport.width < 480 ? viewport.width - 64 : 420,
+          height: (viewport.height - 220).clamp(120.0, 380.0),
           child: StreamBuilder<List<UserProfile>>(
             stream: profiles.watchPublicProfiles(user.uid),
             builder: (context, snapshot) {
@@ -121,13 +124,20 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chats = context.read<ChatService>();
+    final horizontalPadding = AppBreakpoints.pagePadding(context);
+    final compact = MediaQuery.sizeOf(context).width < 380;
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 760),
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                20,
+                horizontalPadding,
+                12,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -136,11 +146,18 @@ class ChatScreen extends StatelessWidget {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                   ),
-                  FilledButton.icon(
-                    onPressed: () => _newChat(context),
-                    icon: const Icon(Icons.edit_square),
-                    label: const Text('Nuevo chat'),
-                  ),
+                  if (compact)
+                    IconButton.filledTonal(
+                      onPressed: () => _newChat(context),
+                      tooltip: 'Nuevo chat',
+                      icon: const Icon(Icons.edit_square),
+                    )
+                  else
+                    FilledButton.icon(
+                      onPressed: () => _newChat(context),
+                      icon: const Icon(Icons.edit_square),
+                      label: const Text('Nuevo chat'),
+                    ),
                 ],
               ),
             ),
@@ -171,7 +188,12 @@ class ChatScreen extends StatelessWidget {
                     );
                   }
                   return ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    padding: EdgeInsets.fromLTRB(
+                      horizontalPadding,
+                      0,
+                      horizontalPadding,
+                      20,
+                    ),
                     itemCount: conversations.length,
                     separatorBuilder: (_, _) => const SizedBox(height: 4),
                     itemBuilder: (context, index) {

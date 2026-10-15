@@ -177,9 +177,11 @@ class _PostCardState extends State<PostCard> {
                     child: Image.network(
                       post.mediaUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const ColoredBox(
-                        color: Color(0xFFEAE3FF),
-                        child: Center(
+                      errorBuilder: (_, _, _) => ColoredBox(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        child: const Center(
                           child: Text('No se pudo cargar la imagen.'),
                         ),
                       ),

@@ -7,6 +7,7 @@ import '../services/adoption_service.dart';
 import '../services/pet_service.dart';
 import '../services/profile_service.dart';
 import '../utils/adoption_filters.dart';
+import '../utils/app_breakpoints.dart';
 import '../widgets/adoption_listing_card.dart';
 import 'adoption_detail_screen.dart';
 import 'adoption_listing_form.dart';
@@ -91,13 +92,20 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
   @override
   Widget build(BuildContext context) {
     final adoption = context.read<AdoptionService>();
+    final horizontalPadding = AppBreakpoints.pagePadding(context);
+    final compact = MediaQuery.sizeOf(context).width < 380;
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1000),
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                20,
+                horizontalPadding,
+                12,
+              ),
               child: Wrap(
                 alignment: WrapAlignment.spaceBetween,
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -108,78 +116,108 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                     'Mascotas en adopción',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  FilledButton.icon(
-                    onPressed: _publishListing,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Ofrecer mascota'),
-                  ),
+                  if (compact)
+                    IconButton.filledTonal(
+                      onPressed: _publishListing,
+                      tooltip: 'Ofrecer mascota',
+                      icon: const Icon(Icons.add),
+                    )
+                  else
+                    FilledButton.icon(
+                      onPressed: _publishListing,
+                      icon: const Icon(Icons.add),
+                      label: const Text('Ofrecer mascota'),
+                    ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-              child: Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  SizedBox(
-                    width: 175,
-                    child: DropdownButtonFormField<String>(
-                      initialValue: _type,
-                      decoration: const InputDecoration(
-                        labelText: 'Tipo',
-                        isDense: true,
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                0,
+                horizontalPadding,
+                16,
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final filterWidth = constraints.maxWidth < 600
+                      ? constraints.maxWidth
+                      : constraints.maxWidth < 840
+                      ? (constraints.maxWidth - 12) / 2
+                      : null;
+                  return Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      SizedBox(
+                        width: filterWidth ?? 175,
+                        child: DropdownButtonFormField<String>(
+                          initialValue: _type,
+                          decoration: const InputDecoration(
+                            labelText: 'Tipo',
+                            isDense: true,
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'todos',
+                              child: Text('Todos'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'perro',
+                              child: Text('Perros'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'gato',
+                              child: Text('Gatos'),
+                            ),
+                          ],
+                          onChanged: (value) => setState(() => _type = value!),
+                        ),
                       ),
-                      items: const [
-                        DropdownMenuItem(value: 'todos', child: Text('Todos')),
-                        DropdownMenuItem(value: 'perro', child: Text('Perros')),
-                        DropdownMenuItem(value: 'gato', child: Text('Gatos')),
-                      ],
-                      onChanged: (value) => setState(() => _type = value!),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 190,
-                    child: DropdownButtonFormField<AdoptionAgeFilter>(
-                      initialValue: _age,
-                      decoration: const InputDecoration(
-                        labelText: 'Edad',
-                        isDense: true,
+                      SizedBox(
+                        width: filterWidth ?? 190,
+                        child: DropdownButtonFormField<AdoptionAgeFilter>(
+                          initialValue: _age,
+                          decoration: const InputDecoration(
+                            labelText: 'Edad',
+                            isDense: true,
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: AdoptionAgeFilter.any,
+                              child: Text('Cualquier edad'),
+                            ),
+                            DropdownMenuItem(
+                              value: AdoptionAgeFilter.young,
+                              child: Text('0 a 1 año'),
+                            ),
+                            DropdownMenuItem(
+                              value: AdoptionAgeFilter.adult,
+                              child: Text('2 a 5 años'),
+                            ),
+                            DropdownMenuItem(
+                              value: AdoptionAgeFilter.senior,
+                              child: Text('6 años o más'),
+                            ),
+                          ],
+                          onChanged: (value) => setState(() => _age = value!),
+                        ),
                       ),
-                      items: const [
-                        DropdownMenuItem(
-                          value: AdoptionAgeFilter.any,
-                          child: Text('Cualquier edad'),
+                      SizedBox(
+                        width: filterWidth ?? 240,
+                        child: TextField(
+                          controller: _location,
+                          onChanged: (_) => setState(() {}),
+                          decoration: const InputDecoration(
+                            labelText: 'Ciudad o zona',
+                            prefixIcon: Icon(Icons.location_on_outlined),
+                            isDense: true,
+                          ),
                         ),
-                        DropdownMenuItem(
-                          value: AdoptionAgeFilter.young,
-                          child: Text('0 a 1 año'),
-                        ),
-                        DropdownMenuItem(
-                          value: AdoptionAgeFilter.adult,
-                          child: Text('2 a 5 años'),
-                        ),
-                        DropdownMenuItem(
-                          value: AdoptionAgeFilter.senior,
-                          child: Text('6 años o más'),
-                        ),
-                      ],
-                      onChanged: (value) => setState(() => _age = value!),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 240,
-                    child: TextField(
-                      controller: _location,
-                      onChanged: (_) => setState(() {}),
-                      decoration: const InputDecoration(
-                        labelText: 'Ciudad o zona',
-                        prefixIcon: Icon(Icons.location_on_outlined),
-                        isDense: true,
                       ),
-                    ),
-                  ),
-                ],
+                    ],
+                  );
+                },
               ),
             ),
             Expanded(
@@ -211,20 +249,33 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                       ),
                     );
                   }
-                  return GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                    itemCount: filtered.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 330,
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      final columns = constraints.maxWidth < 560
+                          ? 1
+                          : constraints.maxWidth < 900
+                          ? 2
+                          : 3;
+                      return GridView.builder(
+                        padding: EdgeInsets.fromLTRB(
+                          horizontalPadding,
+                          0,
+                          horizontalPadding,
+                          20,
+                        ),
+                        itemCount: filtered.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: columns,
                           mainAxisExtent: 340,
                           crossAxisSpacing: 14,
                           mainAxisSpacing: 14,
                         ),
-                    itemBuilder: (context, index) => AdoptionListingCard(
-                      listing: filtered[index],
-                      onTap: () => _openListing(filtered[index]),
-                    ),
+                        itemBuilder: (context, index) => AdoptionListingCard(
+                          listing: filtered[index],
+                          onTap: () => _openListing(filtered[index]),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

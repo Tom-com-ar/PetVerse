@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/pet.dart';
 import '../models/post.dart';
 import '../utils/post_validators.dart';
+import '../utils/app_breakpoints.dart';
 
 class PostFormScreen extends StatefulWidget {
   const PostFormScreen({super.key, required this.pets, required this.onSave})
@@ -71,12 +72,14 @@ class _PostFormScreenState extends State<PostFormScreen> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 680),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(AppBreakpoints.pagePadding(context)),
           child: Card(
             color: Colors.white,
             elevation: 0,
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(
+                AppBreakpoints.isMobile(context) ? 16 : 24,
+              ),
               child: Form(
                 key: _formKey,
                 child: Column(

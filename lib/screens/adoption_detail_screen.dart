@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../models/adoption_listing.dart';
 import '../services/adoption_service.dart';
+import '../utils/app_breakpoints.dart';
 import '../widgets/adoption_contact_form.dart';
 
 class AdoptionDetailScreen extends StatelessWidget {
@@ -20,6 +21,7 @@ class AdoptionDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isOwner = listing.ownerId == user.uid;
+    final placeholder = Theme.of(context).colorScheme.surfaceContainerHighest;
     final initialName = user.displayName?.trim().isNotEmpty == true
         ? user.displayName!.trim()
         : (user.email?.split('@').first ?? '');
@@ -29,25 +31,25 @@ class AdoptionDetailScreen extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 760),
           child: ListView(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(AppBreakpoints.pagePadding(context)),
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
                   child: listing.photoUrl.isEmpty
-                      ? const ColoredBox(
-                          color: Color(0xFFEAE3FF),
-                          child: Center(
+                      ? ColoredBox(
+                          color: placeholder,
+                          child: const Center(
                             child: Icon(Icons.pets_rounded, size: 72),
                           ),
                         )
                       : Image.network(
                           listing.photoUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => const ColoredBox(
-                            color: Color(0xFFEAE3FF),
-                            child: Center(
+                          errorBuilder: (_, _, _) => ColoredBox(
+                            color: placeholder,
+                            child: const Center(
                               child: Icon(
                                 Icons.broken_image_outlined,
                                 size: 56,

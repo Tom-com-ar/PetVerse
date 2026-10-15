@@ -65,6 +65,7 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
 
   Widget _messageBubble(ChatMessage message) {
     final mine = message.senderId == widget.user.uid;
+    final colors = Theme.of(context).colorScheme;
     return Align(
       alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -72,7 +73,7 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         decoration: BoxDecoration(
-          color: mine ? const Color(0xFFEAE3FF) : Colors.white,
+          color: mine ? colors.primaryContainer : colors.surface,
           borderRadius: BorderRadius.circular(18),
         ),
         child: Column(
@@ -100,7 +101,13 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
           children: [
             ProfileAvatar(photoUrl: widget.otherPhotoUrl, radius: 18),
             const SizedBox(width: 10),
-            Text(widget.otherName),
+            Expanded(
+              child: Text(
+                widget.otherName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),
@@ -114,14 +121,18 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                   stream: chats.watchMessages(widget.chatId),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
-                      return const Center(child: Text('No se pudo cargar el historial.'));
+                      return const Center(
+                        child: Text('No se pudo cargar el historial.'),
+                      );
                     }
                     if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
                     }
                     final messages = snapshot.data!;
                     if (messages.isEmpty) {
-                      return const Center(child: Text('Saludá y empezá a conversar.'));
+                      return const Center(
+                        child: Text('Saludá y empezá a conversar.'),
+                      );
                     }
                     return ListView.builder(
                       reverse: true,
@@ -160,7 +171,9 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                             ? const SizedBox(
                                 width: 18,
                                 height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               )
                             : const Icon(Icons.send),
                       ),

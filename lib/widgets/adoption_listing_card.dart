@@ -14,6 +14,7 @@ class AdoptionListingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final placeholder = Theme.of(context).colorScheme.surfaceContainerHighest;
     final ageLabel = listing.ageYears == 0
         ? 'Menos de un año'
         : '${listing.ageYears} ${listing.ageYears == 1 ? 'año' : 'años'}';
@@ -29,16 +30,20 @@ class AdoptionListingCard extends StatelessWidget {
             Expanded(
               flex: 5,
               child: listing.photoUrl.isEmpty
-                  ? const ColoredBox(
-                      color: Color(0xFFEAE3FF),
-                      child: Center(child: Icon(Icons.pets_rounded, size: 56)),
+                  ? ColoredBox(
+                      color: placeholder,
+                      child: const Center(
+                        child: Icon(Icons.pets_rounded, size: 56),
+                      ),
                     )
                   : Image.network(
                       listing.photoUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => const ColoredBox(
-                        color: Color(0xFFEAE3FF),
-                        child: Center(child: Icon(Icons.broken_image_outlined)),
+                      errorBuilder: (_, _, _) => ColoredBox(
+                        color: placeholder,
+                        child: const Center(
+                          child: Icon(Icons.broken_image_outlined),
+                        ),
                       ),
                     ),
             ),

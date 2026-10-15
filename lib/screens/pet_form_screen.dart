@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/pet.dart';
 import '../utils/pet_validators.dart';
+import '../utils/app_breakpoints.dart';
 
 class PetFormScreen extends StatefulWidget {
   const PetFormScreen({super.key, this.pet, required this.onSave});
@@ -90,12 +91,14 @@ class _PetFormScreenState extends State<PetFormScreen> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 680),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(AppBreakpoints.pagePadding(context)),
             child: Card(
               color: Colors.white,
               elevation: 0,
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(
+                  AppBreakpoints.isMobile(context) ? 16 : 24,
+                ),
                 child: Form(
                   key: _formKey,
                   child: Column(

@@ -58,6 +58,7 @@ class _PetCardState extends State<PetCard> {
   @override
   Widget build(BuildContext context) {
     final pet = widget.pet;
+    final placeholder = Theme.of(context).colorScheme.surfaceContainerHighest;
     return Card(
       color: Colors.white,
       elevation: 0,
@@ -85,7 +86,7 @@ class _PetCardState extends State<PetCard> {
                   errorBuilder: (_, _, _) => Container(
                     width: 190,
                     height: 150,
-                    color: const Color(0xFFEAE3FF),
+                    color: placeholder,
                     child: const Icon(Icons.broken_image_outlined),
                   ),
                 ),

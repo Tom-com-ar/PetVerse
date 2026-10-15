@@ -8,6 +8,7 @@ import '../models/user_profile.dart';
 import '../services/gamification_service.dart';
 import '../services/pet_service.dart';
 import '../services/profile_service.dart';
+import '../utils/app_breakpoints.dart';
 import '../widgets/pet_card.dart';
 import '../widgets/profile_avatar.dart';
 import '../widgets/profile_edit_form.dart';
@@ -101,7 +102,7 @@ class ProfileScreen extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 760),
             child: ListView(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(AppBreakpoints.pagePadding(context)),
               children: [
                 Card(
                   color: Colors.white,
@@ -278,12 +279,15 @@ class _GamificationPanel extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
-                  const Icon(Icons.stars_rounded, color: Color(0xFF7455D3)),
+                  Icon(
+                    Icons.stars_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     '${summary.points} puntos',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: const Color(0xFF5F49A5),
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -301,13 +305,15 @@ class _GamificationPanel extends StatelessWidget {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: unlocked
-                          ? const Color(0xFFF0EBFF)
-                          : const Color(0xFFF7F5FA),
+                          ? Theme.of(context).colorScheme.primaryContainer
+                          : Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: unlocked
-                            ? const Color(0xFFD8CCFF)
-                            : const Color(0xFFEAE7EF),
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.outlineVariant,
                       ),
                     ),
                     child: Row(
@@ -316,7 +322,7 @@ class _GamificationPanel extends StatelessWidget {
                         Icon(
                           badge.icon,
                           color: unlocked
-                              ? const Color(0xFF7455D3)
+                              ? Theme.of(context).colorScheme.primary
                               : Colors.black38,
                         ),
                         const SizedBox(width: 9),

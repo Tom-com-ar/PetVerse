@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/pet.dart';
+import '../utils/app_breakpoints.dart';
 
 class AdoptionListingForm extends StatefulWidget {
   const AdoptionListingForm({
@@ -54,12 +55,14 @@ class _AdoptionListingFormState extends State<AdoptionListingForm> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 620),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(AppBreakpoints.pagePadding(context)),
           child: Card(
             color: Colors.white,
             elevation: 0,
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(
+                AppBreakpoints.isMobile(context) ? 16 : 24,
+              ),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -81,7 +84,10 @@ class _AdoptionListingFormState extends State<AdoptionListingForm> {
                           .map(
                             (pet) => DropdownMenuItem(
                               value: pet,
-                              child: Text('${pet.name} · ${pet.breed}'),
+                              child: Text(
+                                '${pet.name} · ${pet.breed}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           )
                           .toList(),

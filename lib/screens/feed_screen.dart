@@ -6,6 +6,7 @@ import '../models/post.dart';
 import '../services/pet_service.dart';
 import '../services/post_service.dart';
 import '../services/profile_service.dart';
+import '../utils/app_breakpoints.dart';
 import '../widgets/post_card.dart';
 import 'post_form_screen.dart';
 
@@ -59,13 +60,20 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final postService = context.read<PostService>();
     final profileService = context.read<ProfileService>();
+    final horizontalPadding = AppBreakpoints.pagePadding(context);
+    final compact = MediaQuery.sizeOf(context).width < 380;
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 760),
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                20,
+                horizontalPadding,
+                12,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -74,11 +82,18 @@ class FeedScreen extends StatelessWidget {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                   ),
-                  FilledButton.icon(
-                    onPressed: () => _createPost(context),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Publicar'),
-                  ),
+                  if (compact)
+                    IconButton.filledTonal(
+                      onPressed: () => _createPost(context),
+                      tooltip: 'Publicar',
+                      icon: const Icon(Icons.add),
+                    )
+                  else
+                    FilledButton.icon(
+                      onPressed: () => _createPost(context),
+                      icon: const Icon(Icons.add),
+                      label: const Text('Publicar'),
+                    ),
                 ],
               ),
             ),
@@ -112,7 +127,12 @@ class FeedScreen extends StatelessWidget {
                     );
                   }
                   return ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    padding: EdgeInsets.fromLTRB(
+                      horizontalPadding,
+                      0,
+                      horizontalPadding,
+                      20,
+                    ),
                     itemCount: posts.length,
                     separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) => PostCard(

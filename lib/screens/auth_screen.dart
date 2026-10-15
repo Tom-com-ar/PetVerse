@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../utils/validators.dart';
+import '../utils/app_breakpoints.dart';
 
 enum AuthMode { login, register, reset }
 
@@ -110,27 +111,29 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     final isRegister = _mode == AuthMode.register;
     final isReset = _mode == AuthMode.reset;
+    final horizontalPadding = AppBreakpoints.pagePadding(context);
+    final compact = AppBreakpoints.isMobile(context);
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(horizontalPadding),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 440),
             child: Card(
               elevation: 0,
               color: Colors.white,
               child: Padding(
-                padding: const EdgeInsets.all(28),
+                padding: EdgeInsets.all(compact ? 20 : 28),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.pets_rounded,
                         size: 54,
-                        color: Color(0xFF7455D3),
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -206,7 +209,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           style: TextStyle(
                             color: _isError
                                 ? Theme.of(context).colorScheme.error
-                                : Colors.green[700],
+                                : Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ],

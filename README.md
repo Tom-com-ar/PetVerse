@@ -19,3 +19,7 @@ Copiá `firebase_config.json.example` como `firebase_config.json`, completá los
 PetVerse suma 10 puntos por publicación, 1 punto por dar like a otra cuenta y 3 puntos por comentario. Cada acción se registra una sola vez; quitar y volver a dar like a la misma publicación no suma puntos otra vez. El perfil muestra el puntaje y el progreso de estas insignias: Primera huella, Creador de patitas, Buen vecino, Voz de la manada y Estrella PetVerse.
 
 Para habilitarlo en Firebase, publicá el `firestore.rules` actualizado desde Firebase Console → Firestore Database → Reglas.
+
+## PV13: Responsive y colores
+
+La navegación inferior se usa en pantallas menores a 840 px y pasa a una barra lateral en tablet horizontal y escritorio. El catálogo de adopción muestra una, dos o tres columnas según el ancho disponible; formularios y contenido conservan un ancho cómodo en pantallas grandes y se ajustan al móvil. La identidad visual usa verde bosque, coral y crema.

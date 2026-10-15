@@ -72,9 +72,12 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
+    insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
     title: const Text('Editar perfil'),
     content: SizedBox(
-      width: 420,
+      width: MediaQuery.sizeOf(context).width < 480
+          ? MediaQuery.sizeOf(context).width - 64
+          : 420,
       child: SingleChildScrollView(
         child: Form(
           key: _formKey,

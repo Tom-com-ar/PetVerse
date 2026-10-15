@@ -15,6 +15,7 @@ import 'services/gamification_service.dart';
 import 'services/pet_service.dart';
 import 'services/post_service.dart';
 import 'services/profile_service.dart';
+import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,21 +63,7 @@ class PetVerseApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
     title: 'PetVerse',
     debugShowCheckedModeBanner: false,
-    theme: ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF7455D3),
-        surface: const Color(0xFFF9F7FF),
-      ),
-      scaffoldBackgroundColor: const Color(0xFFF9F7FF),
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
-      ),
-    ),
+    theme: PetVerseTheme.light,
     home: const AuthGate(),
   );
 }
@@ -108,10 +95,10 @@ class SetupScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.pets_rounded,
                     size: 60,
-                    color: Color(0xFF7455D3),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(height: 16),
                   Text(
