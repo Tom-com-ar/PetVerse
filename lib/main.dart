@@ -10,6 +10,7 @@ import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/auth_service.dart';
 import 'services/adoption_service.dart';
+import 'services/chat_service.dart';
 import 'services/pet_service.dart';
 import 'services/post_service.dart';
 import 'services/profile_service.dart';
@@ -29,6 +30,7 @@ Future<void> main() async {
     final pets = PetService(FirebaseFirestore.instance);
     final posts = PostService(FirebaseFirestore.instance);
     final adoptions = AdoptionService(FirebaseFirestore.instance);
+    final chats = ChatService(FirebaseFirestore.instance);
     runApp(
       MultiProvider(
         providers: [
@@ -36,6 +38,7 @@ Future<void> main() async {
           Provider<PetService>.value(value: pets),
           Provider<PostService>.value(value: posts),
           Provider<AdoptionService>.value(value: adoptions),
+          Provider<ChatService>.value(value: chats),
           ChangeNotifierProvider(
             create: (_) =>
                 AuthProvider(AuthService(FirebaseAuth.instance, profiles)),

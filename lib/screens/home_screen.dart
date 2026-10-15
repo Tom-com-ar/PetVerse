@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart' show User;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import 'adoption_screen.dart';
+import 'chat_screen.dart';
 import 'feed_screen.dart';
 import 'profile_screen.dart';
+import '../services/profile_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.user});
@@ -18,6 +22,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(
+        context.read<ProfileService>().ensurePublicProfile(widget.user),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -44,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         FeedScreen(user: widget.user),
         AdoptionScreen(user: widget.user),
+        ChatScreen(user: widget.user),
         ProfileScreen(user: widget.user),
       ],
     ),
@@ -60,6 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icon(Icons.volunteer_activism_outlined),
           selectedIcon: Icon(Icons.volunteer_activism),
           label: 'Adopción',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.forum_outlined),
+          selectedIcon: Icon(Icons.forum),
+          label: 'Mensajes',
         ),
         NavigationDestination(
           icon: Icon(Icons.person_outline),
