@@ -1,6 +1,26 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function validLikeChange() {
+      let before = resource.data.likes;
+      let after = request.resource.data.likes;
+      return request.auth != null
+        && before is list
+        && after is list
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])
+        && (
+          (!(request.auth.uid in before)
+            && after.size() == before.size() + 1
+            && after.hasAll(before)
+            && request.auth.uid in after)
+          ||
+          (request.auth.uid in before
+            && after.size() == before.size() - 1
+            && before.hasAll(after)
+            && !(request.auth.uid in after))
+        );
+    }
+
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
 
@@ -13,7 +33,8 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow create: if request.auth != null
         && request.resource.data.ownerId == request.auth.uid;
-      allow update, delete: if request.auth != null
+      allow update: if validLikeChange();
+      allow delete: if request.auth != null
         && resource.data.ownerId == request.auth.uid;
     }
   }

@@ -40,4 +40,21 @@ class PostService {
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
+
+  Future<void> toggleLike(String postId, String userId) async {
+    final reference = _posts.doc(postId);
+    await _firestore.runTransaction<void>((transaction) async {
+      final snapshot = await transaction.get(reference);
+      if (!snapshot.exists) throw StateError('La publicación ya no existe.');
+      final likes = ((snapshot.data()?['likes'] as List<dynamic>?) ?? [])
+          .whereType<String>()
+          .toList();
+      if (likes.contains(userId)) {
+        likes.remove(userId);
+      } else {
+        likes.add(userId);
+      }
+      transaction.update(reference, {'likes': likes});
+    });
+  }
 }

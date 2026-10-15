@@ -57,7 +57,7 @@ class FeedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final posts = context.read<PostService>();
+    final postService = context.read<PostService>();
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 760),
@@ -83,7 +83,7 @@ class FeedScreen extends StatelessWidget {
             ),
             Expanded(
               child: StreamBuilder<List<Post>>(
-                stream: posts.watchPosts(),
+                stream: postService.watchPosts(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Center(
@@ -114,8 +114,13 @@ class FeedScreen extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                     itemCount: posts.length,
                     separatorBuilder: (_, _) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) =>
-                        PostCard(post: posts[index]),
+                    itemBuilder: (context, index) => PostCard(
+                      key: ValueKey(posts[index].id),
+                      post: posts[index],
+                      currentUserId: user.uid,
+                      onToggleLike: () =>
+                          postService.toggleLike(posts[index].id, user.uid),
+                    ),
                   );
                 },
               ),
