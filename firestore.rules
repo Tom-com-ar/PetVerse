@@ -21,8 +21,83 @@ service cloud.firestore {
         );
     }
 
+    function postCreatedForGamification(userId, postId) {
+      let path = /databases/$(database)/documents/posts/$(postId);
+      return !exists(path)
+        && existsAfter(path)
+        && getAfter(path).data.ownerId == userId;
+    }
+
+    function likeAddedForGamification(userId, postId) {
+      let path = /databases/$(database)/documents/posts/$(postId);
+      let before = get(path).data;
+      let after = getAfter(path).data;
+      return exists(path)
+        && existsAfter(path)
+        && before.likes is list
+        && after.likes is list
+        && !(userId in before.likes)
+        && userId in after.likes
+        && after.ownerId != userId;
+    }
+
+    function commentCreatedForGamification(userId, postId, commentId) {
+      let path = /databases/$(database)/documents/posts/$(postId)/comments/$(commentId);
+      return !exists(path)
+        && existsAfter(path)
+        && getAfter(path).data.authorId == userId;
+    }
+
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /gamification_events/{eventId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll([
+            'activityType', 'points', 'postId', 'sourceId', 'createdAt'
+          ])
+          && request.resource.data.keys().hasOnly([
+            'activityType', 'points', 'postId', 'sourceId', 'createdAt'
+          ])
+          && request.resource.data.postId is string
+          && request.resource.data.sourceId is string
+          && request.resource.data.createdAt == request.time
+          && (
+            (
+              request.resource.data.activityType == 'post'
+              && request.resource.data.points == 10
+              && eventId == 'post_' + request.resource.data.sourceId
+              && request.resource.data.postId == request.resource.data.sourceId
+              && postCreatedForGamification(
+                userId, request.resource.data.postId
+              )
+            )
+            ||
+            (
+              request.resource.data.activityType == 'like'
+              && request.resource.data.points == 1
+              && eventId == 'like_' + request.resource.data.sourceId
+              && request.resource.data.postId == request.resource.data.sourceId
+              && likeAddedForGamification(
+                userId, request.resource.data.postId
+              )
+            )
+            ||
+            (
+              request.resource.data.activityType == 'comment'
+              && request.resource.data.points == 3
+              && eventId == 'comment_' + request.resource.data.sourceId
+              && commentCreatedForGamification(
+                userId,
+                request.resource.data.postId,
+                request.resource.data.sourceId
+              )
+            )
+          );
+        allow update, delete: if false;
+      }
 
       match /pets/{petId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;

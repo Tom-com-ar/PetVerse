@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/pet.dart';
+import '../models/gamification_summary.dart';
 import '../models/user_profile.dart';
+import '../services/gamification_service.dart';
 import '../services/pet_service.dart';
 import '../services/profile_service.dart';
 import '../widgets/pet_card.dart';
@@ -135,6 +137,8 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
+                _GamificationPanel(userId: user.uid),
+                const SizedBox(height: 20),
                 Wrap(
                   alignment: WrapAlignment.spaceBetween,
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -200,4 +204,167 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
+}
+
+class _GamificationPanel extends StatelessWidget {
+  const _GamificationPanel({required this.userId});
+
+  final String userId;
+
+  static final _badges = <_BadgeDefinition>[
+    _BadgeDefinition(
+      title: 'Primera huella',
+      description: 'Publicá por primera vez',
+      icon: Icons.pets,
+      goal: 1,
+      progress: (summary) => summary.posts,
+    ),
+    _BadgeDefinition(
+      title: 'Creador de patitas',
+      description: 'Publicá 5 veces',
+      icon: Icons.photo_camera_outlined,
+      goal: 5,
+      progress: (summary) => summary.posts,
+    ),
+    _BadgeDefinition(
+      title: 'Buen vecino',
+      description: 'Dá 10 likes',
+      icon: Icons.favorite_outline,
+      goal: 10,
+      progress: (summary) => summary.likes,
+    ),
+    _BadgeDefinition(
+      title: 'Voz de la manada',
+      description: 'Escribí 10 comentarios',
+      icon: Icons.chat_bubble_outline,
+      goal: 10,
+      progress: (summary) => summary.comments,
+    ),
+    _BadgeDefinition(
+      title: 'Estrella PetVerse',
+      description: 'Alcanzá 100 puntos',
+      icon: Icons.star_outline,
+      goal: 100,
+      progress: (summary) => summary.points,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) => StreamBuilder<GamificationSummary>(
+    stream: context.read<GamificationService>().watchSummary(userId),
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
+        return const Card(
+          child: Padding(
+            padding: EdgeInsets.all(18),
+            child: Text('No se pudieron cargar tus logros.'),
+          ),
+        );
+      }
+      final summary = snapshot.data ?? const GamificationSummary.empty();
+      return Card(
+        color: Colors.white,
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Tus logros',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  const Icon(Icons.stars_rounded, color: Color(0xFF7455D3)),
+                  const SizedBox(width: 6),
+                  Text(
+                    '${summary.points} puntos',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: const Color(0xFF5F49A5),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: _badges.map((badge) {
+                  final progress = badge.progress(summary).clamp(0, badge.goal);
+                  final unlocked = progress >= badge.goal;
+                  return Container(
+                    width: 205,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: unlocked
+                          ? const Color(0xFFF0EBFF)
+                          : const Color(0xFFF7F5FA),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: unlocked
+                            ? const Color(0xFFD8CCFF)
+                            : const Color(0xFFEAE7EF),
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          badge.icon,
+                          color: unlocked
+                              ? const Color(0xFF7455D3)
+                              : Colors.black38,
+                        ),
+                        const SizedBox(width: 9),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                badge.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                unlocked
+                                    ? 'Desbloqueada'
+                                    : '${badge.description} ($progress/${badge.goal})',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+class _BadgeDefinition {
+  const _BadgeDefinition({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.goal,
+    required this.progress,
+  });
+
+  final String title;
+  final String description;
+  final IconData icon;
+  final int goal;
+  final int Function(GamificationSummary) progress;
 }
