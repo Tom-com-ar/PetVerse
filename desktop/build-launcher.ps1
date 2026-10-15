@@ -1,5 +1,5 @@
 param(
-  [string] $AppUrl = 'https://petverse-db30c.web.app'
+  [string] $AppUrl = 'https://petverse.web.app'
 )
 
 $ErrorActionPreference = 'Stop'

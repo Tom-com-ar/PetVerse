@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "petverse-db30c"
+  },
+  "targets": {
+    "petverse-db30c": {
+      "hosting": {
+        "petverse": [
+          "petverse"
+        ]
+      }
+    }
+  }
+}

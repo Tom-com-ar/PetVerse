@@ -29,3 +29,23 @@ Para generar el EXE en Windows, ejecutá `desktop/build-launcher.ps1` después d
 ## PV13: Responsive y colores
 
 La navegación inferior se usa en pantallas menores a 840 px y pasa a una barra lateral en tablet horizontal y escritorio. El catálogo de adopción muestra una, dos o tres columnas según el ancho disponible; formularios y contenido conservan un ancho cómodo en pantallas grandes y se ajustan al móvil. La identidad visual usa verde bosque, coral y crema.
+
+## PV14: Despliegue y prueba para el profesor
+
+**URL que ya está publicada:** https://petverse-db30c.web.app
+
+**URL corta solicitada:** https://petverse.web.app
+
+Firebase asigna la URL corta cuando el sitio `petverse` está disponible globalmente. `publicar_petverse.bat` verifica si existe, intenta crearlo si falta, publica la app y actualiza el EXE de la carpeta **Ejecutable**. Si el nombre ya está ocupado por otro proyecto, la URL actual sigue funcionando y se puede compartir con el profesor.
+
+### Cómo probar PetVerse
+
+1. Abrí la URL confirmada al terminar la publicación e iniciá sesión con Google o con tu correo.
+2. En **Mi perfil**, completá el perfil y agregá una mascota.
+3. En **Publicaciones**, subí una foto, probá dar like y dejar un comentario.
+4. En **Adopción**, revisá las mascotas y probá las opciones de contacto o consulta.
+5. En **Mensajes**, iniciá un chat. Para comprobar el intercambio entre usuarios hacen falta dos cuentas distintas.
+6. En **Mi perfil**, revisá los puntos y las insignias que se desbloquean al usar la app.
+7. En un celular, elegí **Instalar PetVerse** en el navegador para agregarla a la pantalla de inicio. En Windows, abrí el EXE de la carpeta **Ejecutable**.
+
+Si Google muestra “dominio no autorizado” con la URL corta, agregá `petverse.web.app` en Firebase Console → Authentication → Settings → Authorized domains.
